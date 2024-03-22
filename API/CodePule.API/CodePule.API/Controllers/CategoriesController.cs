@@ -28,7 +28,7 @@ namespace CodePule.API.Controllers
                 Name = request.Name,
                 UrlHandle = request.UrlHandle,
             };
-
+            //afdasfasdf
             await categoryRepository.CreateAsync(category);
             //Domain model to dto
             var response = new CategoryDto
