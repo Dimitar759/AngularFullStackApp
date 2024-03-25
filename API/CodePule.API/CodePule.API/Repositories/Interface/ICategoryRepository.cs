@@ -1,4 +1,6 @@
 ﻿using CodePule.API.Modules.Domain;
+using CodePule.API.Modules.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodePule.API.Repositories.Interface
 {
@@ -6,6 +8,12 @@ namespace CodePule.API.Repositories.Interface
     {
         Task<Category> CreateAsync(Category category);
         Task<IEnumerable<Category>> GetAllAsync();
+
+        Task<Category?> GetById(Guid id);
+
+        Task <Category?> UpdateAsync (Category category);
+
+        Task<Category?> DeleteAsync(Guid id);
 
     }
 }

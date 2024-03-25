@@ -5,12 +5,13 @@
         <a [routerLink]="['/admin/categories/add']" class="btn btn-primary">Add Category</a>
     </div>
 
-    <ng-container *ngIf="categories">
+    <ng-container *ngIf="categories$ | async as categories">
         <table class="table table-bordered mt-3">
             <thead>
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
+                    <th>Url Handle</th>
                     <th>Url Handle</th>
                     
                 </tr>
@@ -20,6 +21,7 @@
                     <td>{{category.id}}</td>
                     <td>{{category.name}}</td>
                     <td>{{category.urlHandle}}</td>
+                    <td><a class="btn btn-light" [routerLink]="['/admin/categories', category.id]">Edit</a></td>
                 </tr>
             </tbody>
         </table>
