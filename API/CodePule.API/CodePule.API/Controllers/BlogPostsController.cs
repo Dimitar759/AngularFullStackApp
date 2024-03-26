@@ -4,6 +4,7 @@ using CodePule.API.Repositories.Implementation;
 using CodePule.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata;
 
 namespace CodePule.API.Controllers
 {
@@ -12,10 +13,12 @@ namespace CodePule.API.Controllers
     public class BlogPostsController : ControllerBase
     {
         private readonly IBlogPostRepository blogPostRepository;
+        private readonly ICategoryRepository categoryRepository;
 
-        public BlogPostsController(IBlogPostRepository blogPostRepository)
+        public BlogPostsController(IBlogPostRepository blogPostRepository, ICategoryRepository categoryRepository)
         {
             this.blogPostRepository = blogPostRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         //Post: {apibaseurl}/api/blogposts
@@ -33,8 +36,19 @@ namespace CodePule.API.Controllers
                 PublishedData = request.PublishedData,
                 ShortDescription= request.ShortDescription,
                 Title = request.Title,
-                UrlHandle = request.UrlHandle
+                UrlHandle = request.UrlHandle,
+                Categories = new List<Category>()
             };
+
+            foreach (var categoryGuid in request.Categories)
+            {
+                var existingCategory = await categoryRepository.GetById(categoryGuid);
+
+                if (existingCategory != null)
+                {
+                    blogPost.Categories.Add(existingCategory);
+                }
+            }
             blogPost = await blogPostRepository.CreateAsync(blogPost);
 
             //Convert domain model to dto
@@ -48,7 +62,15 @@ namespace CodePule.API.Controllers
                 PublishedData = blogPost.PublishedData,
                 ShortDescription = blogPost.ShortDescription,
                 Title = blogPost.Title,
-                UrlHandle = blogPost.UrlHandle
+                UrlHandle = blogPost.UrlHandle,
+                Categories = blogPost.Categories.Select(x => new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle
+
+                }).ToList()
+
             };
 
             return Ok(response);
@@ -75,7 +97,14 @@ namespace CodePule.API.Controllers
                     PublishedData = blogPost.PublishedData,
                     ShortDescription = blogPost.ShortDescription,
                     Title = blogPost.Title,
-                    UrlHandle = blogPost.UrlHandle
+                    UrlHandle = blogPost.UrlHandle,
+                    Categories = blogPost.Categories.Select(x => new CategoryDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        UrlHandle = x.UrlHandle
+
+                    }).ToList()
                 });
             }
 
