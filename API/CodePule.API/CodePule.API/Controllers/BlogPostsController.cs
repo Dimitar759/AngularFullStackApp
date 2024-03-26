@@ -9,11 +9,11 @@ namespace CodePule.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BlogPostController : ControllerBase
+    public class BlogPostsController : ControllerBase
     {
         private readonly IBlogPostRepository blogPostRepository;
 
-        public BlogPostController(IBlogPostRepository blogPostRepository)
+        public BlogPostsController(IBlogPostRepository blogPostRepository)
         {
             this.blogPostRepository = blogPostRepository;
         }
@@ -34,20 +34,20 @@ namespace CodePule.API.Controllers
                 Title = request.Title,
                 UrlHandle = request.UrlHandle
             };
-            await blogPostRepository.CreateAsync(blogPost);
+            blogPost = await blogPostRepository.CreateAsync(blogPost);
 
             //Convert domain model to dto
             var response = new BlogPostDto
             {
                 Id = blogPost.Id,
-                Author = request.Author,
-                Content = request.Content,
-                FeaturedImageUrl = request.FeaturedImageUrl,
-                IsVisible = request.IsVisible,
-                PublishedData = request.PublishedData,
-                ShortDescription = request.ShortDescription,
-                Title = request.Title,
-                UrlHandle = request.UrlHandle
+                Author = blogPost.Author,
+                Content = blogPost.Content,
+                FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                IsVisible = blogPost.IsVisible,
+                PublishedData = blogPost.PublishedData,
+                ShortDescription = blogPost.ShortDescription,
+                Title = blogPost.Title,
+                UrlHandle = blogPost.UrlHandle
             };
 
             return Ok(response);

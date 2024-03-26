@@ -6,7 +6,7 @@ namespace CodePule.API.Repositories.Implementation
 {
     public class BlogPostRepository : IBlogPostRepository
     {
-        private ApplicationDbContext dbContext;
+        private readonly ApplicationDbContext dbContext;
 
         public BlogPostRepository(ApplicationDbContext dbContext)
         {
