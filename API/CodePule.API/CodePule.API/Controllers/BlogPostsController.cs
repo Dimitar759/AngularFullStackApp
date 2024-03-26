@@ -110,5 +110,43 @@ namespace CodePule.API.Controllers
 
             return Ok(response);
         }
+
+        //Get: {apibaseurl}/api/plogposts/id
+        [HttpGet]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> GetBlogPostById([FromRoute]Guid id)
+        {
+            //Get the blogpost from repo
+            var blogPost = await blogPostRepository.GetByIdAsync(id);
+
+            if(blogPost == null)
+            {
+                return NotFound();
+            }
+
+            //ConvertToDto
+            var response = new BlogPostDto
+            {
+                Id = blogPost.Id,
+                Author = blogPost.Author,
+                Content = blogPost.Content,
+                FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                IsVisible = blogPost.IsVisible,
+                PublishedData = blogPost.PublishedData,
+                ShortDescription = blogPost.ShortDescription,
+                Title = blogPost.Title,
+                UrlHandle = blogPost.UrlHandle,
+                Categories = blogPost.Categories.Select(x => new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle
+
+                }).ToList(),
+            };
+
+            return Ok(response);
+        }
+
     }
 }
