@@ -1,6 +1,7 @@
 ﻿using CodePule.API.Data;
 using CodePule.API.Modules.Domain;
 using CodePule.API.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodePule.API.Repositories.Implementation
 {
@@ -20,6 +21,11 @@ namespace CodePule.API.Repositories.Implementation
             await dbContext.BlogPosts.AddAsync(blogPost);
             await dbContext.SaveChangesAsync();
             return blogPost;
+        }
+
+        public async Task<IEnumerable<BlogPost>> GetAllAsync()
+        {
+            return await dbContext.BlogPosts.ToListAsync();
         }
     }
 }
