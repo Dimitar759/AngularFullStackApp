@@ -28,4 +28,8 @@ export class BlogPostService {
   updateBlogPost(id: string, updateBlogPost: UpdateBlogPost): Observable<BlogPost>{
     return this.http.put<BlogPost>(`${environment.apiBaseUrl}/api/blogposts/${id}`, updateBlogPost);
   }
+
+  delteBlogPost(id: string): Observable<BlogPost>{
+    return this.http.delete<BlogPost>(`${environment.apiBaseUrl}/api/blogposts/${id}`);
+  }
 }
