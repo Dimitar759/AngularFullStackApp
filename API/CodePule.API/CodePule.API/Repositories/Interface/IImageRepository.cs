@@ -4,6 +4,9 @@ namespace CodePule.API.Repositories.Interface
 {
     public interface IImageRepository
     {
-        Task <BlogImage>Upload(IFormFile file, BlogImage blogImage);
+        Task<BlogImage> Upload(IFormFile file, BlogImage blogImage);
+
+        Task<IEnumerable<BlogImage>> GetAll();
     }
+
 }

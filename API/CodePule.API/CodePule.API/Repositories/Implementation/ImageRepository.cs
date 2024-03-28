@@ -1,6 +1,7 @@
 ﻿using CodePule.API.Data;
 using CodePule.API.Modules.Domain;
 using CodePule.API.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodePule.API.Repositories.Implementation
 {
@@ -14,21 +15,27 @@ namespace CodePule.API.Repositories.Implementation
             IHttpContextAccessor httpContextAccessor,
             ApplicationDbContext dbContext)
         {
+            this.webHostEnvironment = webHostEnvironment;
+            this.httpContextAccessor = httpContextAccessor;
             this.dbContext = dbContext;
         }
+
+        public async Task<IEnumerable<BlogImage>> GetAll()
+        {
+            return await dbContext.BlogImages.ToListAsync();
+        }
+
         public async Task<BlogImage> Upload(IFormFile file, BlogImage blogImage)
         {
-            //1 - Upload the image to Api/images
+            // 1- Upload the Image to API/Images
             var localPath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{blogImage.FileName}{blogImage.FileExtention}");
-
             using var stream = new FileStream(localPath, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            //2 - Update the database
-            //https://codepulse.com/images/somefilename.jpg
-
+            // 2-Update the database
+            // https://codepulse.com/images/somefilename.jpg
             var httpRequest = httpContextAccessor.HttpContext.Request;
-            var urlPath = $"{httpRequest.Scheme}: // {httpRequest.Host}{httpRequest.PathBase}/images/{blogImage.FileName}{blogImage.FileExtention}";
+            var urlPath = $"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}/Images/{blogImage.FileName}{blogImage.FileExtention}";
 
             blogImage.Url = urlPath;
 
