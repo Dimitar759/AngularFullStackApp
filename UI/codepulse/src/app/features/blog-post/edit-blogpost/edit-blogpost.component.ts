@@ -8,6 +8,7 @@ import { Category } from '../../category/models/category.model';
 import { UpdateBlogPost } from '../models/update-blog-post.model';
 import { Router } from '@angular/router';
 import { response } from 'express';
+import { ImageService } from '../../../shared/components/image-selector/image.service';
 
 @Component({
   selector: 'app-edit-blogpost',
@@ -19,36 +20,54 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
   model?: BlogPost;
   categories$? :   Observable<Category[]>;
   selectedCategories?: string []
+  isImageSelectorVisible : boolean = false;
+
   routeSubscription?: Subscription;
   updateBlogPostSubscription?: Subscription;
   getBlogPostSubscription?: Subscription;
   deleteBlogPostSubscription?: Subscription;
-  isImageSelectorVisible : boolean = false;
+  imageSelectSubscription?: Subscription;
   
   constructor(private route: ActivatedRoute, 
     private blogPostService: BlogPostService,
     private categoryService: CategoryService,
-    private router:Router) {
+    private router:Router,
+    private imageService: ImageService ) {
 
     }
 
-  ngOnInit(): void {
-
-    this.categories$ = this.categoryService.getAllCategories();
-    this.routeSubscription = this.route.paramMap.subscribe({
-      next:(params) => { 
-        this.id = params.get('id');
-
-      if (this.id) {
-        this.getBlogPostSubscription = this.blogPostService.getBlogPostById(this.id).subscribe({
-          next: (response) => {
-            this.model = response;
-            this.selectedCategories = response.categories.map(x => x.id);
+    ngOnInit(): void {
+      this.categories$ = this.categoryService.getAllCategories();
+  
+  
+      this.routeSubscription = this.route.paramMap.subscribe({
+        next: (params) => {
+          this.id = params.get('id');
+  
+          // Get BlogPost From API
+          if (this.id) {
+            this.getBlogPostSubscription = this.blogPostService.getBlogPostById(this.id).subscribe({
+              next: (response) => {
+                this.model = response;
+                this.selectedCategories = response.categories.map(x => x.id);
+              }
+            });
+            ;
           }
-        });
-      }
-    }});
-  }
+  
+          this.imageSelectSubscription = this.imageService.onSelectImage()
+          .subscribe({
+            next: (response) => {
+              if (this.model) {
+                this.model.featuredImageUrl = response.url;
+                this.isImageSelectorVisible = false;
+              }
+            }
+          })
+        }
+      });
+    }
+  
 
   onFormSubmit(): void {
     //convert model to request object
@@ -100,5 +119,6 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
     this.updateBlogPostSubscription?.unsubscribe();
     this.getBlogPostSubscription?.unsubscribe();
     this.deleteBlogPostSubscription?.unsubscribe();
+    this.imageSelectSubscription?.unsubscribe();
   }
 }
