@@ -15,6 +15,7 @@ namespace CodePule.API.Controllers
         {
             this.userManager = userManager;
         }
+
         //Post: {apibaseurl}/api/auth/register
         [HttpPost]
         [Route("register")]

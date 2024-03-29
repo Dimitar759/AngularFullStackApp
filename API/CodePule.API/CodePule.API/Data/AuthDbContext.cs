@@ -6,19 +6,18 @@ namespace CodePule.API.Data
 {
     public class AuthDbContext : IdentityDbContext
     {
-        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options) 
+        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            var readerRoleId = "be70e312 - ab2e - 42a0 - acbc - bb827cc7deaf";
-            var writerRoleId = "135ead50-6b3b-46bd-8a04-a533a7d96474";
 
+            var readerRoleId = "28d65a5b-a7db-4850-b380-83591f7d7531";
+            var writerRoleId = "9740f16c-24a1-4224-a7be-1bb00b7c6892";
 
-            //create reader and writer role
+            // Create Reader and Writer Role
             var roles = new List<IdentityRole>
             {
                 new IdentityRole()
@@ -27,24 +26,22 @@ namespace CodePule.API.Data
                     Name = "Reader",
                     NormalizedName = "Reader".ToUpper(),
                     ConcurrencyStamp = readerRoleId
-
                 },
                 new IdentityRole()
                 {
-                    Id=writerRoleId,
-                    Name="Writer",
-                    NormalizedName="Writer".ToUpper(),
+                    Id = writerRoleId,
+                    Name = "Writer",
+                    NormalizedName = "Writer".ToUpper(),
                     ConcurrencyStamp = writerRoleId
                 }
-
-
             };
 
-            //See the roles
+            // Seed the roles
             builder.Entity<IdentityRole>().HasData(roles);
 
-            //Create an admin user
-            var adminUserId = "81007036-e556-4503-896b-3252d8f571ed";
+
+            // Create an Admin User
+            var adminUserId = "edc267ec-d43c-4e3b-8108-a1a1f819906d";
             var admin = new IdentityUser()
             {
                 Id = adminUserId,
@@ -55,30 +52,26 @@ namespace CodePule.API.Data
             };
 
             admin.PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(admin, "Admin@123");
+
             builder.Entity<IdentityUser>().HasData(admin);
 
-
-            //Give roles to admin 
+            // Give Roles To Admin
 
             var adminRoles = new List<IdentityUserRole<string>>()
             {
                 new()
                 {
                     UserId = adminUserId,
-                    RoleId= readerRoleId
-
+                    RoleId = readerRoleId
                 },
-
                 new()
                 {
                     UserId = adminUserId,
-                    RoleId= writerRoleId
-
+                    RoleId = writerRoleId
                 }
             };
-            builder.Entity<IdentityUser<string>>().HasData(adminRoles);
 
-
+            builder.Entity<IdentityUserRole<string>>().HasData(adminRoles);
         }
 
     }
