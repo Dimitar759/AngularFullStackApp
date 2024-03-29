@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../features/auth/services/services.service';
+import { User } from '../../../features/auth/models/user.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -7,8 +9,11 @@ import { AuthService } from '../../../features/auth/services/services.service';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit{
+  user?: User;
 
-  constructor(private authService: AuthService){
+
+  constructor(private authService: AuthService,
+    private router: Router){
 
   }
 
@@ -16,9 +21,17 @@ export class NavbarComponent implements OnInit{
     this.authService.user()
     .subscribe({
       next:(response)=>{
-        console.log(response);
+        this.user = response;
       }
     })
+
+    this.user = this.authService.getUser();
+  }
+
+  onLogout():void{
+    this.authService.logout();
+    this.router.navigateByUrl('/');
+    
   }
 
 }
