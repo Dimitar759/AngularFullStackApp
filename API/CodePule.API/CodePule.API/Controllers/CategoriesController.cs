@@ -2,6 +2,7 @@
 using CodePule.API.Modules.Domain;
 using CodePule.API.Modules.DTO;
 using CodePule.API.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace CodePule.API.Controllers
         {
             this.categoryRepository = categoryRepository;
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryRequestDto request)
         {
@@ -44,6 +46,7 @@ namespace CodePule.API.Controllers
         //Get: /api/categories
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await categoryRepository.GetAllAsync();
