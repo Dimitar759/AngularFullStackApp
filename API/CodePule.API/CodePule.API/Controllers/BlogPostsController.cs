@@ -24,7 +24,7 @@ namespace CodePule.API.Controllers
 
         //Post: {apibaseurl}/api/blogposts
         [HttpPost]
-        [Authorize(Roles ="Writer")]
+        //[Authorize(Roles ="Writer")]
         public async Task<IActionResult> CreateBlogPost([FromBody]CreateBlogPostRequestDto request)
         {
             //Convert from dto to domain model
@@ -190,7 +190,7 @@ namespace CodePule.API.Controllers
         //Put: {apibaseurl}/api/blogposts/{id}
         [HttpPut]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> UpdateBlogPostById([FromRoute] Guid id, UpdateBlogPostRequestDto request)
         {
@@ -255,7 +255,7 @@ namespace CodePule.API.Controllers
         //Delete: {apibaseurl/api/blogposts/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteBlogPost([FromRoute] Guid id)
         {
             var deletedBlogPost = await blogPostRepository.DeleteAsync(id);

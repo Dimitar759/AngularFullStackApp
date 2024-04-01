@@ -1,39 +1,39 @@
-﻿using CodePule.API.Data;
-using CodePule.API.Modules.Domain;
+﻿using CodePule.API.Modules.Domain;
 using CodePule.API.Modules.DTO;
 using CodePule.API.Repositories.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CodePule.API.Controllers
+namespace CodePulse.API.Controllers
 {
     // https://localhost:xxxx/api/categories
     [Route("api/[controller]")]
     [ApiController]
-    public class Categories : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly ICategoryRepository categoryRepository;
 
-        public Categories(ICategoryRepository categoryRepository)
+        public CategoriesController(ICategoryRepository categoryRepository)
         {
             this.categoryRepository = categoryRepository;
         }
 
+
         [HttpPost]
         //[Authorize(Roles = "Writer")]
-        public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryRequestDto request)
+        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequestDto request)
         {
-            //map dto to domain model
-
+            // Map DTO to Domain Model
             var category = new Category
             {
                 Name = request.Name,
-                UrlHandle = request.UrlHandle,
+                UrlHandle = request.UrlHandle
             };
-            //afdasfasdf
+
             await categoryRepository.CreateAsync(category);
-            //Domain model to dto
+
+            // Domain model to DTO
             var response = new CategoryDto
             {
                 Id = category.Id,
@@ -44,19 +44,22 @@ namespace CodePule.API.Controllers
             return Ok(response);
         }
 
-        //Get: https://localhost:7255/api/categories?query=htmlgit
-
+        // GET: https://localhost:7226/api/Categories?query=html&sortBy=name&sortDirection=desc
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories([FromQuery] string? query,
+        public async Task<IActionResult> GetAllCategories(
+            [FromQuery] string? query,
             [FromQuery] string? sortBy,
-            [FromQuery] string? sortDirection)
+            [FromQuery] string? sortDirection,
+            [FromQuery] int? pageNumber,
+            [FromQuery] int? pageSize)
         {
-            var categories = await categoryRepository.GetAllAsync(query, sortBy, sortDirection);
+            var caterogies = await categoryRepository
+                .GetAllAsync(query, sortBy, sortDirection, pageNumber, pageSize);
 
-            //map domain model to DTO
+            // Map Domain model to DTO
 
             var response = new List<CategoryDto>();
-            foreach (var category in categories)
+            foreach (var category in caterogies)
             {
                 response.Add(new CategoryDto
                 {
@@ -69,16 +72,16 @@ namespace CodePule.API.Controllers
             return Ok(response);
         }
 
-        //Get: https://localhost:7255/api/categories/{id}
+        // GET: https://localhost:7226/api/categories/{id}
         [HttpGet]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> GetCategoryById([FromRoute]Guid id)
+        public async Task<IActionResult> GetCategoryById([FromRoute] Guid id)
         {
             var existingCategory = await categoryRepository.GetById(id);
 
-            if(existingCategory is null)
+            if (existingCategory is null)
             {
-                return NotFound(); //http 404
+                return NotFound();
             }
 
             var response = new CategoryDto
@@ -91,14 +94,13 @@ namespace CodePule.API.Controllers
             return Ok(response);
         }
 
-        //Put: https://localhost:7255/api/categories/{id}
+        // PUT: https://localhost:7226/api/categories/{id}
         [HttpPut]
-        [Route("{id:guid}")]
+        [Route("{id:Guid}")]
         //[Authorize(Roles = "Writer")]
-        public async Task <IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
+        public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
         {
-            //Convert dto to domain model
-
+            // Convert DTO to Domain Model
             var category = new Category
             {
                 Id = id,
@@ -106,15 +108,14 @@ namespace CodePule.API.Controllers
                 UrlHandle = request.UrlHandle
             };
 
-            await categoryRepository.UpdateAsync(category);
+            category = await categoryRepository.UpdateAsync(category);
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            //Convert domain model to dto
-
+            // Convert Domain model to DTO
             var response = new CategoryDto
             {
                 Id = category.Id,
@@ -125,21 +126,21 @@ namespace CodePule.API.Controllers
             return Ok(response);
         }
 
-        //Delete: https://localhost:7255/api/categories/{id}
+
+        // DELETE: https://localhost:7226/api/categories/{id}
         [HttpDelete]
-        [Route("{id:guid}")]
-        [Authorize(Roles = "Writer")]
+        [Route("{id:Guid}")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await categoryRepository.DeleteAsync(id);
 
-            if(category is null)
+            if (category is null)
             {
                 return NotFound();
             }
 
-            //Convert domain to DTO
-
+            // Convert Domain model to DTO
             var response = new CategoryDto
             {
                 Id = category.Id,
@@ -148,6 +149,18 @@ namespace CodePule.API.Controllers
             };
 
             return Ok(response);
+        }
+
+
+        // GET: https://localhost:7226/api/categories/count
+        [HttpGet]
+        [Route("count")]
+        //[Authorize(Roles = "Writer")]
+        public async Task<IActionResult> GetCategoriesTotal()
+        {
+            var count = await categoryRepository.GetCount();
+
+            return Ok(count);
         }
     }
 }

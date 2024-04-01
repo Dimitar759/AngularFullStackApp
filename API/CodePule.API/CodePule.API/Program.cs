@@ -1,6 +1,7 @@
 using CodePule.API.Data;
 using CodePule.API.Repositories.Implementation;
 using CodePule.API.Repositories.Interface;
+using CodePulse.API.Repositories.Implementation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

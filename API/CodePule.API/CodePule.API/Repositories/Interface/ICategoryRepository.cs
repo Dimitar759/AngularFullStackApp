@@ -7,7 +7,12 @@ namespace CodePule.API.Repositories.Interface
     public interface ICategoryRepository
     {
         Task<Category> CreateAsync(Category category);
-        Task<IEnumerable<Category>> GetAllAsync(string? query = null, string? sortBy = null, string? sortDirection = null );
+        Task<IEnumerable<Category>> GetAllAsync(
+            string? query = null, 
+            string? sortBy = null, 
+            string? sortDirection = null, 
+            int? pagenumber = 1, 
+            int? pageSize = 100);
 
         Task<Category?> GetById(Guid id);
 
@@ -15,5 +20,6 @@ namespace CodePule.API.Repositories.Interface
 
         Task<Category?> DeleteAsync(Guid id);
 
+        Task<int> GetCount();
     }
 }
