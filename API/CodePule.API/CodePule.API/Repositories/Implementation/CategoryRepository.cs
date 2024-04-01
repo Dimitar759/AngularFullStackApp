@@ -35,7 +35,7 @@ namespace CodePule.API.Repositories.Implementation
             return existingCategory;
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync(string? query = null)
+        public async Task<IEnumerable<Category>> GetAllAsync(string? query = null, string? sortBy = null, string? sortDirection = null  )
         {
             var categories = dbContext.Categories.AsQueryable();
 
@@ -43,6 +43,26 @@ namespace CodePule.API.Repositories.Implementation
             {
                 categories = categories.Where(x =>  x.Name.Contains(query));
             }
+
+            if(string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                if(string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    var isASC = string.Equals(sortDirection, "asc", StringComparison.OrdinalIgnoreCase) ? true : false;
+
+                    categories = isASC ? categories.OrderBy(x => x.Name) : categories.OrderByDescending(x => x.Name);
+                }
+
+                if (string.Equals(sortBy, "URL", StringComparison.OrdinalIgnoreCase))
+                {
+                    var isASC = string.Equals(sortDirection, "asc", StringComparison.OrdinalIgnoreCase) ? true : false;
+
+                    categories = isASC ? categories.OrderBy(x => x.UrlHandle) : categories.OrderByDescending(x => x.UrlHandle);
+                }
+
+            }
+
+
             return await categories.ToListAsync();
             //return await dbContext.Categories.ToListAsync();
         }

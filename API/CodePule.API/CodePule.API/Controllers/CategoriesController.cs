@@ -44,12 +44,14 @@ namespace CodePule.API.Controllers
             return Ok(response);
         }
 
-        //Get: https://localhost:7255/api/categories?query
+        //Get: https://localhost:7255/api/categories?query=htmlgit
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories([FromQuery] string? query)
+        public async Task<IActionResult> GetAllCategories([FromQuery] string? query,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? sortDirection)
         {
-            var categories = await categoryRepository.GetAllAsync(query);
+            var categories = await categoryRepository.GetAllAsync(query, sortBy, sortDirection);
 
             //map domain model to DTO
 
