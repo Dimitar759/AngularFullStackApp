@@ -35,9 +35,16 @@ namespace CodePule.API.Repositories.Implementation
             return existingCategory;
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<IEnumerable<Category>> GetAllAsync(string? query = null)
         {
-            return await dbContext.Categories.ToListAsync();
+            var categories = dbContext.Categories.AsQueryable();
+
+            if(string.IsNullOrEmpty(query) == false)
+            {
+                categories = categories.Where(x =>  x.Name.Contains(query));
+            }
+            return await categories.ToListAsync();
+            //return await dbContext.Categories.ToListAsync();
         }
 
         public async Task<Category?> GetById(Guid id)
