@@ -7,6 +7,7 @@ A simple blog where a user can be logged in as an admin to add and edit categori
 More accounts can be added as admins so that multiple people can create and edit categories and blog posts, only admins can create new admin accounts so that they can edit and upload posts and categories!
 
 Admin account created by me for everyone who wants to check out adding and creating blog posts and categories: 
+
 -username: admin1@codepulse.com
 -Password: Admin1@123
 
